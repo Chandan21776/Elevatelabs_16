@@ -18,6 +18,5 @@ Cross-Validation: 5-fold stratified CV
 Scoring Metric: F1-score (optimal for imbalanced classification)
 Total Search Time: ~30 seconds
 <img width="1671" height="935" alt="Screenshot 2026-02-24 140556" src="https://github.com/user-attachments/assets/6dc72b05-03a1-4e67-9164-506d76bf86ea" />
-<img width="1001" height="949" alt="Screenshot 2026-02-24 140646" src="https://github.com/user-attachments/assets/6f48200b-9735-45e8-955a-511bac07094f" />
 <img width="1191" height="897" alt="Screenshot 2026-02-24 140609" src="https://github.com/user-attachments/assets/8c239ba8-3180-4394-9cc1-6a194d5feb84" />
 <img width="1001" height="949" alt="Screenshot 2026-02-24 140646" src="https://github.com/user-attachments/assets/87c19f16-3abc-496a-8cd5-211d1ba1a9fb" />
