@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GridSearchCV — Hyperparameter Optimization Lab</title>
+  <link rel="stylesheet" href="./style.css" />
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <!-- Terminal Header -->
+  <header class="terminal-header">
+    <div class="term-bar">
+      <div class="term-dots">
+        <span class="dot red"></span>
+        <span class="dot yellow"></span>
+        <span class="dot green"></span>
+      </div>
+      <div class="term-title">gridsearch_cv@ml-lab:~/task16</div>
+      <div class="term-menu">
+        <span>OPTIMIZE</span>
+        <span>EVALUATE</span>
+        <span>DEPLOY</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Command -->
+  <section class="hero-cmd">
+    <div class="cmd-prompt">
+      <span class="user">root@optimization</span><span class="sep">:</span><span class="path">~/gridsearch</span><span class="cursor">$</span>
+    </div>
+    <h1 class="cmd-title">
+      <span class="flash">></span> python gridsearch_cv.py
+      <span class="cmd-flag">--optimize</span>
+      <span class="cmd-flag">--models=3</span>
+      <span class="cmd-flag">--cv=5</span>
+    </h1>
+    <div class="cmd-output">
+      <div class="output-line">
+        <span class="tag">[INFO]</span> Task 16: Hyperparameter Tuning using GridSearchCV
+      </div>
+      <div class="output-line">
+        <span class="tag success">[DONE]</span> 569 samples | 30 features | 160 total combinations tested
+      </div>
+      <div class="output-line">
+        <span class="tag">[BEST]</span> <span id="bestModelHeader">SVM</span> — F1: <span id="bestF1Header">0.9861</span>
+      </div>
+    </div>
+  </section>
+
+  <main class="container">
+
+    <!-- Grid Status -->
+    <section class="grid-status">
+      <div class="status-card">
+        <div class="sc-icon">🎯</div>
+        <div class="sc-val" id="totalCombinations">160</div>
+        <div class="sc-label">Parameter Combinations Tested</div>
+      </div>
+      <div class="status-card">
+        <div class="sc-icon">⚡</div>
+        <div class="sc-val" id="cvFolds">5</div>
+        <div class="sc-label">Cross-Validation Folds</div>
+      </div>
+      <div class="status-card">
+        <div class="sc-icon">🚀</div>
+        <div class="sc-val" id="bestImprovement">+0.00%</div>
+        <div class="sc-label">Best Improvement</div>
+      </div>
+      <div class="status-card">
+        <div class="sc-icon">⏱️</div>
+        <div class="sc-val" id="totalTime">30.3s</div>
+        <div class="sc-label">Total Tuning Time</div>
+      </div>
+    </section>
+
+    <!-- Model Selector -->
+    <section class="section">
+      <div class="section-header">
+        <span class="prompt">$</span>
+        <h2 class="section-title">Model Comparison Matrix</h2>
+        <div class="section-status">
+          <span class="blink">●</span> ANALYZING
+        </div>
+      </div>
+
+      <div class="model-selector">
+        <button class="model-btn active" data-model="SVM">
+          <div class="mb-name">SVM</div>
+          <div class="mb-meta">32 combinations</div>
+        </button>
+        <button class="model-btn" data-model="Random Forest">
+          <div class="mb-name">Random Forest</div>
+          <div class="mb-meta">108 combinations</div>
+        </button>
+        <button class="model-btn" data-model="Logistic Regression">
+          <div class="mb-name">Logistic Regression</div>
+          <div class="mb-meta">20 combinations</div>
+        </button>
+      </div>
+
+      <!-- Comparison Cards -->
+      <div class="comparison-grid">
+        <div class="comp-card default">
+          <div class="cc-badge">DEFAULT</div>
+          <div class="cc-title">Baseline Performance</div>
+          <div class="metrics-list">
+            <div class="ml-row">
+              <span class="ml-label">Accuracy</span>
+              <span class="ml-val" id="defaultAcc">—</span>
+            </div>
+            <div class="ml-row">
+              <span class="ml-label">Precision</span>
+              <span class="ml-val" id="defaultPrec">—</span>
+            </div>
+            <div class="ml-row">
+              <span class="ml-label">Recall</span>
+              <span class="ml-val" id="defaultRec">—</span>
+            </div>
+            <div class="ml-row">
+              <span class="ml-label">F1-Score</span>
+              <span class="ml-val accent" id="defaultF1">—</span>
+            </div>
+            <div class="ml-row">
+              <span class="ml-label">AUC-ROC</span>
+              <span class="ml-val" id="defaultAUC">—</span>
+            </div>
+            <div class="ml-row">
+              <span class="ml-label">Train Time</span>
+              <span class="ml-val" id="defaultTime">—</span>
+            </div>
+          </div>
+          <div class="cc-params">
+            <div class="param-tag">Default Parameters</div>
+          </div>
+        </div>
+
+        <div class="comp-arrow">
+          <div class="arrow-label">GridSearchCV</div>
+          <div class="arrow-symbol">→</div>
+        </div>
+
+        <div class="comp-card tuned">
+          <div class="cc-badge tuned-badge">TUNED</div>
+          <div class="cc-title">Optimized Performance</div>
+          <div class="metrics-list">
+            <div class="ml-row">
+              <span class="ml-label">Accuracy</span>
+              <span class="ml-val" id="tunedAcc">—</span>
+              <span class="ml-delta" id="deltaAcc"></span>
+            </div>
+            <div class="ml-row">
+              <span class="ml-label">Precision</span>
+              <span class="ml-val" id="tunedPrec">—</span>
+              <span class="ml-delta" id="deltaPrec"></span>
+            </div>
+            <div class="ml-row">
+              <span class="ml-label">Recall</span>
+              <span class="ml-val" id="tunedRec">—</span>
+              <span class="ml-delta" id="deltaRec"></span>
+            </div>
+            <div class="ml-row">
+              <span class="ml-label">F1-Score</span>
+              <span class="ml-val accent" id="tunedF1">—</span>
+              <span class="ml-delta" id="deltaF1"></span>
+            </div>
+            <div class="ml-row">
+              <span class="ml-label">AUC-ROC</span>
+              <span class="ml-val" id="tunedAUC">—</span>
+              <span class="ml-delta" id="deltaAUC"></span>
+            </div>
+            <div class="ml-row">
+              <span class="ml-label">CV F1 Score</span>
+              <span class="ml-val" id="cvScore">—</span>
+            </div>
+          </div>
+          <div class="cc-params" id="bestParams">
+            <!-- Dynamically filled -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Charts -->
+    <section class="section">
+      <div class="section-header">
+        <span class="prompt">$</span>
+        <h2 class="section-title">Visualization Dashboard</h2>
+      </div>
+
+      <div class="charts-grid">
+        <div class="chart-box">
+          <div class="chart-header">
+            <span class="ch-icon">📊</span>
+            <span class="ch-title">Metric Comparison</span>
+          </div>
+          <div class="chart-body">
+            <canvas id="metricsChart"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-box">
+          <div class="chart-header">
+            <span class="ch-icon">📈</span>
+            <span class="ch-title">Performance Delta</span>
+          </div>
+          <div class="chart-body">
+            <canvas id="deltaChart"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-box wide">
+          <div class="chart-header">
+            <span class="ch-icon">⚙️</span>
+            <span class="ch-title">All Models — Before & After</span>
+          </div>
+          <div class="chart-body tall">
+            <canvas id="allModelsChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Best Parameters Table -->
+    <section class="section">
+      <div class="section-header">
+        <span class="prompt">$</span>
+        <h2 class="section-title">Best Parameters Output</h2>
+        <div class="section-status">
+          <span class="blink">●</span> SAVED
+        </div>
+      </div>
+
+      <div class="params-table-wrapper">
+        <table class="params-table" id="paramsTable">
+          <thead>
+            <tr>
+              <th>Model</th>
+              <th>Parameter</th>
+              <th>Default</th>
+              <th>Optimized</th>
+              <th>Impact</th>
+            </tr>
+          </thead>
+          <tbody id="paramsTableBody">
+            <!-- Dynamically filled -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Performance Table -->
+    <section class="section">
+      <div class="section-header">
+        <span class="prompt">$</span>
+        <h2 class="section-title">Performance Comparison Table</h2>
+      </div>
+
+      <div class="perf-table-wrapper">
+        <table class="perf-table">
+          <thead>
+            <tr>
+              <th>Model</th>
+              <th>Config</th>
+              <th>Accuracy</th>
+              <th>Precision</th>
+              <th>Recall</th>
+              <th>F1-Score</th>
+              <th>AUC-ROC</th>
+              <th>Time (s)</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="perfTableBody">
+            <!-- Dynamically filled -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Code Snippet -->
+    <section class="section">
+      <div class="section-header">
+        <span class="prompt">$</span>
+        <h2 class="section-title">cat gridsearch_example.py</h2>
+      </div>
+
+      <div class="code-terminal">
+        <div class="code-header">
+          <span class="code-file">gridsearch_example.py</span>
+          <button class="copy-code-btn" id="copyBtn">COPY</button>
+        </div>
+        <pre class="code-content"><code id="codeBlock">from sklearn.model_selection import GridSearchCV
+from sklearn.svm import SVC
+from sklearn.preprocessing import StandardScaler
+
+# Define parameter grid
+param_grid = {
+    'C': [0.1, 1, 10, 100],
+    'gamma': ['scale', 'auto', 0.001, 0.01],
+    'kernel': ['rbf', 'linear']
+}
+
+# Create GridSearchCV
+grid_search = GridSearchCV(
+    estimator=SVC(probability=True, random_state=42),
+    param_grid=param_grid,
+    cv=5,
+    scoring='f1',
+    n_jobs=-1
+)
+
+# Fit and find best parameters
+grid_search.fit(X_train_scaled, y_train)
+
+# Results
+print(f"Best Parameters: {grid_search.best_params_}")
+print(f"Best CV Score: {grid_search.best_score_:.4f}")
+
+# Use best model
+best_model = grid_search.best_estimator_
+predictions = best_model.predict(X_test)</code></pre>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="terminal-footer">
+    <div class="footer-line">
+      <span class="tag">[EXIT]</span> Task 16 Complete — Hyperparameter Tuning with GridSearchCV
+    </div>
+    <div class="footer-line dim">
+      ML Internship · sklearn · 569 samples · 30 features · 5-fold CV
+    </div>
+  </footer>
+
+  <script src="./script.js"></script>
+</body>
+</html>
